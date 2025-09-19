@@ -8,38 +8,41 @@ let songs = [];
 // --- Albums configuration (hardcoded for GitHub Pages) ---
 const albums = [
   { 
-    folder: "Aashiqui-2", 
-    path: "songs1/Aashiqui-2/", 
+    folder: "songs1/Aashiqui-2", 
     songs: ["Aasan Nahin Yahah", "Aashiqui (The Love Theme)"], 
     cover: "cover.jpg",
     title: "Aashiqui 2",
     description: "Popular songs from Aashiqui 2"
   },
   {
-    folder: "Rowdy- Rathore",
-    path: "songs1/Rowdy- Rathore/",
+    folder: "songs1/Rowdy- Rathore",
     songs: ["Chandaniya Chup jana re"],
     cover: "cover.jpg",
     title: "Rowdy Rathore",
     description: "Hit songs from Rowdy Rathore"
   },
   {
-    folder: "Chill_(mood)",
-    path: "songs1/Chill_(mood)/",
-    songs: ["chill1", "chill2"], // tumhare actual mp3 names
+    folder: "songs1/Chill_(mood)",
+    songs: ["chill1", "chill2"],
     cover: "cover.jpg",
     title: "Chill Vibes",
     description: "Relaxing chill songs"
   }
-  // Baaki mood albums bhi isi tarah add kar sakte ho
+  // Baaki albums isi tarah add kar sakte ho
 ];
 
-// --- Load album songs ---
+// --- Load album songs and cover ---
 function loadAlbum(album) {
   currentAlbum = album;
   songs = album.songs || [];
   document.querySelector(".spotifyPlaylist h1").textContent = album.title || album.folder;
-  document.querySelector(".cardContainer").innerHTML = `<img src="${album.path}${album.cover}" alt="Album Cover" class="rounded" style="width:200px"/>`;
+
+  // Display cover image in cardContainer
+  const cardContainer = document.querySelector(".cardContainer");
+  if(cardContainer){
+    cardContainer.innerHTML = `<img src="${album.folder}/${album.cover}" alt="Album Cover" class="rounded" style="width:200px"/>`;
+  }
+
   updateSongList(songs);
 }
 
@@ -70,7 +73,7 @@ function updateSongList(songs) {
 function playSongAtIndex(index) {
   if (!songs.length || index < 0 || index >= songs.length) return;
   currentSong = songs[index];
-  audio.src = `${currentAlbum.path}${encodeURIComponent(currentSong)}.mp3`;
+  audio.src = `${currentAlbum.folder}/${encodeURIComponent(currentSong)}.mp3`;
   audio.play().then(() => {
     document.querySelector("#play").src = "img/pause.svg";
     document.querySelector(".songinfo").textContent = currentSong;
