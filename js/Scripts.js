@@ -1,11 +1,10 @@
-console.log("GitHub Pages compatible music player");
-
+// Scripts.js (GitHub Pages ready)
 let audio = new Audio();
 let currentSong = null;
 let currentAlbum = null;
 let songs = [];
 
-// --- Albums configuration (hardcoded for GitHub Pages) ---
+// Albums configuration
 const albums = [
   { 
     folder: "songs1/Aashiqui-2", 
@@ -28,25 +27,18 @@ const albums = [
     title: "Chill Vibes",
     description: "Relaxing chill songs"
   }
-  // Baaki albums isi tarah add kar sakte ho
 ];
 
-// --- Load album songs and cover ---
+// Load album
 function loadAlbum(album) {
   currentAlbum = album;
   songs = album.songs || [];
   document.querySelector(".spotifyPlaylist h1").textContent = album.title || album.folder;
-
-  // Display cover image in cardContainer
-  const cardContainer = document.querySelector(".cardContainer");
-  if(cardContainer){
-    cardContainer.innerHTML = `<img src="${album.folder}/${album.cover}" alt="Album Cover" class="rounded" style="width:200px"/>`;
-  }
-
+  document.querySelector(".cardContainer").innerHTML = `<img src="${album.folder}/${album.cover}" alt="Album Cover" class="rounded" style="width:200px"/>`;
   updateSongList(songs);
 }
 
-// --- Update song list ---
+// Update song list
 function updateSongList(songs) {
   const songUl = document.querySelector(".songlist ul");
   if (!songUl) return;
@@ -69,7 +61,7 @@ function updateSongList(songs) {
   });
 }
 
-// --- Play song ---
+// Play song
 function playSongAtIndex(index) {
   if (!songs.length || index < 0 || index >= songs.length) return;
   currentSong = songs[index];
@@ -81,13 +73,13 @@ function playSongAtIndex(index) {
   }).catch(err => console.error("Error playing song:", err));
 }
 
-// --- Highlight current song ---
+// Highlight current song
 function updateActiveSong(index) {
   document.querySelectorAll(".songlist li").forEach(el => el.classList.remove("selected"));
   document.querySelectorAll(".songlist li")[index]?.classList.add("selected");
 }
 
-// --- Buttons ---
+// Play/Pause buttons
 document.querySelector("#play").addEventListener("click", () => {
   if (!currentSong) playSongAtIndex(0);
   else if (audio.paused) { audio.play(); document.getElementById("play").src = "img/pause.svg"; }
@@ -103,7 +95,7 @@ document.querySelector("#previous").addEventListener("click", () => {
   playSongAtIndex(newIndex);
 });
 
-// --- Seekbar ---
+// Seekbar
 audio.addEventListener("timeupdate", () => {
   let songTime = document.querySelector(".songtime");
   if (!songTime) return;
@@ -119,7 +111,6 @@ document.querySelector(".seekbar").addEventListener("click", e => {
   audio.currentTime = ((audio.duration) * percent) / 100;
 });
 
-// --- Format time ---
 function formatTime(seconds) {
   if (isNaN(seconds)) return "00:00";
   let minutes = Math.floor(seconds / 60);
@@ -127,27 +118,19 @@ function formatTime(seconds) {
   return `${String(minutes).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
 }
 
-// --- Sidebar toggle ---
-document.querySelector(".hamburger").addEventListener("click", () => {
-  document.querySelector(".left").style.left = "0";
-});
-document.querySelector(".close").addEventListener("click", () => {
-  document.querySelector(".left").style.left = "-120%";
-});
+// Sidebar toggle
+document.querySelector(".hamburger").addEventListener("click", () => { document.querySelector(".left").style.left = "0"; });
+document.querySelector(".close").addEventListener("click", () => { document.querySelector(".left").style.left = "-120%"; });
 
-// --- Volume control ---
-document.querySelector(".range input").addEventListener("change", e => {
-  audio.volume = parseInt(e.target.value)/100;
-});
+// Volume
+document.querySelector(".range input").addEventListener("change", e => { audio.volume = parseInt(e.target.value)/100; });
 
-// --- Auto next song ---
+// Auto next song
 audio.addEventListener("ended", () => {
   let newIndex = (songs.indexOf(currentSong) + 1) % songs.length;
   playSongAtIndex(newIndex);
 });
 
-// --- Initialize ---
-function main() {
-  if (albums.length > 0) loadAlbum(albums[0]); // Load first album by default
-}
+// Init
+function main() { if(albums.length>0) loadAlbum(albums[0]); }
 main();
