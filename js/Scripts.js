@@ -5,44 +5,42 @@ let currentSong = null;
 let currentAlbum = null;
 let songs = [];
 
-// --- Albums configuration ---
+// --- Albums configuration (hardcoded for GitHub Pages) ---
 const albums = [
-  { folder: "Aashiqui-2", path: "songs1/Aashiqui-2/" },
-  { folder: "Rowdy- Rathore", path: "songs1/Rowdy- Rathore/" },
-  { folder: "Angry_(mood)", path: "songs1/Angry_(mood)/" },
-  { folder: "Bright_(mood)", path: "songs1/Bright_(mood)/" },
-  { folder: "Chill_(mood)", path: "songs1/Chill_(mood)/" },
-  { folder: "Dark_(mood)", path: "songs1/Dark_(mood)/" },
-  { folder: "Diljit", path: "songs1/Diljit/" },
-  { folder: "Funky_(mood)", path: "songs1/Funky_(mood)/" },
-  { folder: "Love_(mood)", path: "songs1/Love_(mood)/" }
+  { 
+    folder: "Aashiqui-2", 
+    path: "songs1/Aashiqui-2/", 
+    songs: ["Aasan Nahin Yahah", "Aashiqui (The Love Theme)"], 
+    cover: "cover.jpg",
+    title: "Aashiqui 2",
+    description: "Popular songs from Aashiqui 2"
+  },
+  {
+    folder: "Rowdy- Rathore",
+    path: "songs1/Rowdy- Rathore/",
+    songs: ["Chandaniya Chup jana re"],
+    cover: "cover.jpg",
+    title: "Rowdy Rathore",
+    description: "Hit songs from Rowdy Rathore"
+  },
+  {
+    folder: "Chill_(mood)",
+    path: "songs1/Chill_(mood)/",
+    songs: ["chill1", "chill2"], // tumhare actual mp3 names
+    cover: "cover.jpg",
+    title: "Chill Vibes",
+    description: "Relaxing chill songs"
+  }
+  // Baaki mood albums bhi isi tarah add kar sakte ho
 ];
 
-// --- Load album songs from info.json ---
-async function loadAlbum(album) {
+// --- Load album songs ---
+function loadAlbum(album) {
   currentAlbum = album;
-  try {
-    const res = await fetch(`${album.path}info.json`);
-    const info = await res.json();
-
-    document.querySelector(".spotifyPlaylist h1").textContent = info.title || album.folder;
-
-    // Songs array from info.json or empty
-    songs = info.songs || [];
-
-    updateSongList(songs);
-    updateAlbumCover(info.cover ? `${album.path}${info.cover}` : "");
-  } catch (err) {
-    console.error("Error loading album info:", err);
-    songs = [];
-    updateSongList(songs);
-  }
-}
-
-// --- Update album cover ---
-function updateAlbumCover(src) {
-  const cardContainer = document.querySelector(".cardContainer");
-  cardContainer.innerHTML = src ? `<img src="${src}" alt="Album Cover" class="rounded" style="width:200px;"/>` : "";
+  songs = album.songs || [];
+  document.querySelector(".spotifyPlaylist h1").textContent = album.title || album.folder;
+  document.querySelector(".cardContainer").innerHTML = `<img src="${album.path}${album.cover}" alt="Album Cover" class="rounded" style="width:200px"/>`;
+  updateSongList(songs);
 }
 
 // --- Update song list ---
@@ -50,7 +48,6 @@ function updateSongList(songs) {
   const songUl = document.querySelector(".songlist ul");
   if (!songUl) return;
   songUl.innerHTML = "";
-
   songs.forEach((song, index) => {
     const li = document.createElement("li");
     li.innerHTML = `
@@ -151,4 +148,3 @@ function main() {
   if (albums.length > 0) loadAlbum(albums[0]); // Load first album by default
 }
 main();
-
