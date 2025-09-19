@@ -1,17 +1,21 @@
-console.log("GitHub Pages compatible album player");
+console.log("GitHub Pages compatible music player");
 
 let audio = new Audio();
 let currentSong = null;
 let currentAlbum = null;
 let songs = [];
 
-// --- Albums ---
+// --- Albums configuration ---
 const albums = [
-  {
-    folder: "Aashiqui-2",
-    path: "songs1/Aashiqui-2/",
-  },
-  // Agar future me aur albums add karna ho, yaha add karo
+  { folder: "Aashiqui-2", path: "songs1/Aashiqui-2/" },
+  { folder: "Rowdy- Rathore", path: "songs1/Rowdy- Rathore/" },
+  { folder: "Angry_(mood)", path: "songs1/Angry_(mood)/" },
+  { folder: "Bright_(mood)", path: "songs1/Bright_(mood)/" },
+  { folder: "Chill_(mood)", path: "songs1/Chill_(mood)/" },
+  { folder: "Dark_(mood)", path: "songs1/Dark_(mood)/" },
+  { folder: "Diljit", path: "songs1/Diljit/" },
+  { folder: "Funky_(mood)", path: "songs1/Funky_(mood)/" },
+  { folder: "Love_(mood)", path: "songs1/Love_(mood)/" }
 ];
 
 // --- Load album songs from info.json ---
@@ -20,33 +24,28 @@ async function loadAlbum(album) {
   try {
     const res = await fetch(`${album.path}info.json`);
     const info = await res.json();
+
     document.querySelector(".spotifyPlaylist h1").textContent = info.title || album.folder;
-    
-    // Songs array from info.json or manual list
-    if (info.songs && info.songs.length > 0) {
-      songs = info.songs;
-    } else {
-      // Fallback: manually define songs array here if info.json me na ho
-      songs = [
-        "Aasan Nahin Yahah ",
-        "Aashiqui (The Love Theme) "
-      ];
-    }
+
+    // Songs array from info.json or empty
+    songs = info.songs || [];
 
     updateSongList(songs);
-    updateAlbumCover(info.cover || `${album.path}cover.jpg`);
+    updateAlbumCover(info.cover ? `${album.path}${info.cover}` : "");
   } catch (err) {
     console.error("Error loading album info:", err);
+    songs = [];
+    updateSongList(songs);
   }
 }
 
-// --- Update Album Cover ---
+// --- Update album cover ---
 function updateAlbumCover(src) {
   const cardContainer = document.querySelector(".cardContainer");
-  cardContainer.innerHTML = `<img src="${src}" alt="Album Cover" class="rounded" style="width:200px;"/>`;
+  cardContainer.innerHTML = src ? `<img src="${src}" alt="Album Cover" class="rounded" style="width:200px;"/>` : "";
 }
 
-// --- Update Song List in UI ---
+// --- Update song list ---
 function updateSongList(songs) {
   const songUl = document.querySelector(".songlist ul");
   if (!songUl) return;
@@ -70,7 +69,7 @@ function updateSongList(songs) {
   });
 }
 
-// --- Play Song ---
+// --- Play song ---
 function playSongAtIndex(index) {
   if (!songs.length || index < 0 || index >= songs.length) return;
   currentSong = songs[index];
@@ -79,7 +78,7 @@ function playSongAtIndex(index) {
     document.querySelector("#play").src = "img/pause.svg";
     document.querySelector(".songinfo").textContent = currentSong;
     updateActiveSong(index);
-  });
+  }).catch(err => console.error("Error playing song:", err));
 }
 
 // --- Highlight current song ---
@@ -136,7 +135,7 @@ document.querySelector(".close").addEventListener("click", () => {
   document.querySelector(".left").style.left = "-120%";
 });
 
-// --- Volume Control ---
+// --- Volume control ---
 document.querySelector(".range input").addEventListener("change", e => {
   audio.volume = parseInt(e.target.value)/100;
 });
@@ -149,7 +148,7 @@ audio.addEventListener("ended", () => {
 
 // --- Initialize ---
 function main() {
-  // Load first album by default
-  if (albums.length > 0) loadAlbum(albums[0]);
+  if (albums.length > 0) loadAlbum(albums[0]); // Load first album by default
 }
 main();
+
